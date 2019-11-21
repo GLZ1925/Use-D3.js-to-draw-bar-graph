@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bar_graph</title>
+    <script src="d3/d3.js" charset="UTF-8"></script>
+    <style>
+        .axis path,
+        .axis line{
+            fill: none;
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+
+        .axis text {
+            font-family: sans-serif;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+<script>
+    //define the svg
+    //定义画布
+    var height = 400;
+    var width = 400;
+    var svg = d3.select("body")
+            .append("svg")
+            .attr("width",width)
+            .attr("height",height);
+    var padding = {left:30,right:30,top:20,bottom:30};
+
+    //定义数据集
+    var dataset = [10,20,30,50,20,40,30];
+
+    //X轴比例尺
+    var Xscale = d3.scale.ordinal()
+            .domain(d3.range(dataset.length))
+            .rangeRoundBands([0,width-padding.left-padding.right]);
+    //Y轴比例尺
+    var Yscale = d3.scale.linear()
+            .domain([0,d3.max(dataset)])
+            .range([height-padding.top-padding.bottom,0]);
+
+    //定义x轴
+    var xAxis = d3.svg.axis()
+            .scale(Xscale)
+            .orient("bottom");
+    //定义Y轴
+    var yAxis = d3.svg.axis()
+            .scale(Yscale)
+            .orient("left");
+
+    //矩形之间的空白
+    var rectPadding = 3;
+
+    //添加矩形
+    svg.selectAll("rect")
+            .data(dataset)
+            .enter()
+            .append("rect")
+            .attr("transform","translate(" + padding.left + "," + padding.top + ")")
+            .attr("x", function(d,i){
+            return Xscale(i) + rectPadding/2;
+            } )
+            .attr("y",function(d){
+                return Yscale(d);
+            })
+            .attr("width", Xscale.rangeBand() - rectPadding )
+            .attr("height", function(d){
+                return height - padding.top - padding.bottom - Yscale(d);
+            })
+            .attr("fill","steelblue");
+
+    //添加文字元素
+    var texts = svg.selectAll("text")
+        .data(dataset)
+        .enter()
+        .append("text")
+        .attr("transform","translate(" + padding.left + "," + padding.top + ")")
+        .attr("x", function(d,i){
+            return Xscale(i) + rectPadding/2;
+        } )
+        .attr("y",function(d){
+            return Yscale(d);
+        })
+        .attr("dx",function(){
+            return (Xscale.rangeBand()/2 - rectPadding - 8);
+        })
+        .attr("dy",function(d){
+            return 20;
+        })
+        .text(function(d){
+            return d;
+        })
+        .attr("fill","white");
+
+    //添加x轴
+    svg.append("g")
+        .attr("class","axis")
+        .attr("transform","translate(" + padding.left + "," + (height - padding.bottom) + ")")
+        .call(xAxis);
+
+    //添加y轴
+    svg.append("g")
+        .attr("class","axis")
+        .attr("transform","translate(" + padding.left + "," + padding.top + ")")
+        .call(yAxis);
+</script>
+</body>
+</html>

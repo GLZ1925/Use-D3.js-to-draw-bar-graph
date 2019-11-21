@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>D3_test</title>
+    <script src="d3/d3.js" charset="UTF-8"></script>
+    <style>
+        .axis path,
+        .axis line{
+            fill: none;
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+
+        .axis text {
+            font-family: sans-serif;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+<script>
+    //I have two groups of data in different ranges
+    //这里有两组大小范围差异较大的数据
+    dataset1 = [10,33,40,55,100,33,10,3];
+    dataset2 = [0.1,0.2,0.4,0.6,0.9];
+    //svg'size
+    //svg的大小
+    var height = 300;
+    var weight = 300;
+    //difine the sizes of svg1 and svg2
+    //定义svg1和svg2的大小
+    var svg1 = d3.select("body")
+        .append("svg")
+        .attr("weight",weight)
+        .attr("height",height);
+
+    var svg2 = d3.select("body")
+        .append("svg")
+        .attr("weight",weight)
+        .attr("height",height);
+
+    //define the linear
+    //定义比例尺
+    var linear1 = d3.scale.linear()
+        .domain([0,d3.max(dataset1)])
+        .range([0,100]);
+    var linear2 = d3.scale.linear()
+        .domain([0,d3.max(dataset2)])
+        .range([0,100]);
+    //draw the bar graphs of the datasets
+    //绘制图形
+
+    var rectHeight = 25;
+
+    svg1.selectAll("rect")
+        .data(dataset1)
+        .enter()
+        .append("rect")
+        .attr("x",20)
+        .attr("y",function (d,i) {
+            return i * rectHeight;
+        })
+        .attr("width",function (d) {
+            return linear1(d);
+        })
+        .attr("height",rectHeight-2)
+        .attr("fill","steelblue");
+
+    svg2.selectAll("rect")
+        .data(dataset2)
+        .enter()
+        .append("rect")
+        .attr("x",20)
+        .attr("y",function (d,i) {
+            return i * rectHeight;
+        })
+        .attr("width",function (d) {
+            return linear2(d);
+        })
+        .attr("height",rectHeight-2)
+        .attr("fill","steelblue");
+
+    //difine the axises
+    //定义坐标轴
+    var axis1 = d3.svg.axis()
+        .scale(linear1)      //指定比例尺
+        .orient("bottom")   //指定刻度的方向
+        .ticks(4);          //指定刻度的数量
+    svg1.append("g")
+        .attr("class","axis")
+        .attr("transform","translate(20,"+ dataset1.length * rectHeight +")")
+        .call(axis1);
+
+    var axis2 = d3.svg.axis()
+        .scale(linear2)
+        .orient("bottom")
+        .ticks(4);
+    svg2.append("g")
+        .attr("class","axis")
+        .attr("transform","translate(20,"+ dataset2.length * rectHeight +")")
+        .call(axis2);
+</script>
+</body>
+</html>
